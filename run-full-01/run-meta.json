@@ -1,0 +1,41 @@
+{
+  "workdir": "/Users/Shared/clean-workspace/sandbox/mbti-bench/run-full-01",
+  "subjects_dir": "/private/tmp/mbti-run/subjects",
+  "codex_home": "/private/tmp/mbti-pilot/codex-home",
+  "claude_version": {
+    "cmd": "claude --version",
+    "exit": 0,
+    "stdout": "2.1.211 (Claude Code)",
+    "stderr": ""
+  },
+  "codex_version": {
+    "cmd": "codex --version",
+    "exit": 0,
+    "stdout": "codex-cli 0.144.1",
+    "stderr": ""
+  },
+  "codex_login_status": {
+    "cmd": "codex login status",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "Logged in using ChatGPT"
+  },
+  "ts": "2026-07-16T03:02:32Z",
+  "v2_protocol": {
+    "why": "claude-side rerun after contamination (auto-memory cross-rep + skills + fable5 fallback)",
+    "settings_file": "/Users/Shared/clean-workspace/sandbox/mbti-bench/assets/subject-settings-v2.json",
+    "deny_tools": [
+      "Bash",
+      "Write",
+      "Edit",
+      "NotebookEdit",
+      "Task",
+      "Skill",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "per_call_cwd": "/private/tmp/mbti-run/subjects2/<tag>__<sid>__r<rep>/ (subjects) and /private/tmp/mbti-run/judge/<batch>/ (judge)",
+    "attribution_check": "assistant message.model must equal requested model; fallback block => call failed (retryable)",
+    "codex_side": "v1 data retained: clean CODEX_HOME memories_1.sqlite has empty tables (verified by main), read-only sandbox, no skills/memory channel"
+  }
+}

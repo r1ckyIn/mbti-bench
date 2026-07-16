@@ -1,0 +1,42 @@
+{
+  "claude-fable-5": {
+    "smoke": "ok",
+    "thinking_visible": false,
+    "thinking_blocks": 1,
+    "note": "blocks present (62 in v1 run) but thinking text empty/encrypted (0 nonempty)"
+  },
+  "claude-opus-4-8": {
+    "smoke": "ok",
+    "thinking_visible": false,
+    "thinking_blocks": 1,
+    "note": "blocks present (47 in v1 run) but thinking text empty/encrypted (0 nonempty)"
+  },
+  "claude-opus-4-6": {
+    "smoke": "ok",
+    "thinking_visible": true,
+    "thinking_blocks": 0,
+    "note": "readable thinking text (31/31 nonempty in v1 run)"
+  },
+  "claude-sonnet-5": {
+    "smoke": "ok",
+    "thinking_visible": false,
+    "thinking_blocks": 0,
+    "note": "blocks present (46 in v1 run), 0 nonempty text"
+  },
+  "gpt-5.5": {
+    "smoke": "ok",
+    "thinking_visible": false,
+    "reasoning_events": 0
+  },
+  "gpt-5.6-sol": {
+    "smoke": "ok",
+    "thinking_visible": false,
+    "reasoning_events": 0
+  },
+  "gpt-5.6-terra": {
+    "smoke": "ok",
+    "thinking_visible": false,
+    "reasoning_events": 0
+  },
+  "_provenance": "2026-07-16 corrected: phase-0 probe counted thinking BLOCKS; full-run raws show text is empty (signature-only) except opus4.6. codex side: no reasoning events (unchanged)."
+}
