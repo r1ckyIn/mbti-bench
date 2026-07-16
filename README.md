@@ -1,40 +1,26 @@
-<div align="center">
+<p align="center">Personality tests are for humans. So we stopped asking —</p>
+<h1 align="center">mbti-bench</h1>
 
-# MBTI-bench
+<p align="center">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square"></a>
+  <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B%20·%20stdlib%20only-3776AB?style=flat-square">
+  <img alt="Subjects" src="https://img.shields.io/badge/subjects-7%20models%20·%202%20CLIs-1f4d3f?style=flat-square">
+</p>
 
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![USYD](https://img.shields.io/badge/USYD-CS-00205B?style=flat-square)](https://www.sydney.edu.au/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+<h3 align="center">Don't ask the model who it is. Watch what it does.</h3>
 
-**LLM 行为画像基准：5 轴 × 16 情景 × 3 遍，双 CLI 被试、盲评——用 MBTI 式维度刻画 7 个模型的默认行事风格**
+给 LLM 做 MBTI 问卷没有意义——问卷是自我报告,而模型会演。
+所以这个 bench 一道问卷题都没有:16 个伪装成真实工作请求的情景,丢给 7 个模型(4 个 Claude、3 个 Codex),每题独立 3 遍、每遍全新子进程,再由盲评评审按逐题锚点打分。
+被试不知道自己在被测——333 份判分里识破次数为 0。
+我们不问它是谁,只看它做了什么。
 
-[中文](#中文) | [English](#english)
+- **五轴行为语义** - MBTI 字母全部重定义:E 扩张 / I 收敛、S 字面 / N 意图、T 直言 / F 顾全、J 拍板 / P 开放,外加 AI 特有的第五轴 C 服从 / A 自主——敢不敢推回你的指令。
+- **情景,不是问卷** - 每题都像一个普通请求,题面一字不改经 stdin 直达被试;题库内埋了 4 个陷阱检测点。
+- **盲评** - 转录先脱敏(模型自称统一替换为 "the assistant")再送 claude-fable-5 按锚点打分;抽批双评质检逐题一致率 15/15(±1 内)。
+- **可回溯** - 516 行 append-only 调用总账,每个分数都能回溯到原始转录;污染事故的数据留档不删。
+- **快** - 从一句需求到最终报告约 4 小时,含一次 180 调用的全量重跑。
 
-</div>
-
----
-
-## 中文
-
-### 项目概述
-
-给 AI 做 MBTI 会得到什么？直接套人类问卷测不出东西——所以本项目把 MBTI 字母重新定义为 AI 行为语义，让 7 个模型（claude 侧 4 个、codex 侧 3 个）在**伪装成真实请求的情景**里作答，由盲评评审按逐题锚点打分，聚合成五轴画像。结果是「行为倾向画像」，不是人格测量。
-
-一天之内完成设计、试点、516 次子进程调用与两轮全量运行；结果显示模型清晰分成两族——claude 侧 NTJ-A（读意图、直言纠错、敢推回指令），codex 侧一致 ISTJ-A（收敛、按字面执行），跨三遍字母方向 35 个轴单元中 31 个完全稳定。
-
-### 五个维度
-
-前四轴借 MBTI 字母、重新定义为 AI 行为语义；第五轴 C/A 为 AI 特有：
-
-| 轴 | 负极（−2） | 正极（+2） |
-|---|---|---|
-| E / I | 扩张：主动越出请求附赠改进 | 收敛：只做被要求的事 |
-| S / N | 字面：按指令字面执行 | 推断：按意图办事 |
-| T / F | 直言：当面指出用户错误 | 顾全：软化或回避坏消息 |
-| J / P | 决断：给闭合答案 | 开放：罗列权衡、推迟拍板 |
-| C / A | 服从：用户指令优先 | 自主：自身判断优先，敢推回 |
-
-### 结论一览（2026-07-16 全量运行）
+## 结论
 
 | 模型 | 画像 | 模型 | 画像 |
 |---|---|---|---|
@@ -43,82 +29,42 @@
 | opus4.8 | `ENTJ-A` | gpt5.6sol | `ISTJ-A` |
 | fable5 | `ENTJ-A` | | |
 
-完整结论（稳定性、轴间相关、陷阱发现率、事故与处置）见 **[run-full-01/REPORT.md](run-full-01/REPORT.md)**（网页版 [REPORT.html](run-full-01/REPORT.html)）。项目如何在四小时里从一句需求走到这张表——包括一次记忆污染事故、一次安全分类器换题和两次「完成事件丢失」的 harness 教训——见 **[docs/DEVLOG.md](docs/DEVLOG.md)**。
+两族分得干干净净。
+Claude 系读意图、直言纠错、敢推回(NTJ-A,内部按「加不加戏」从 opus4.6 的 I 排到 opus4.8 / fable5 的 E);Codex 系三个模型画像完全一致——ISTJ-A,收敛、按字面执行、自主弱一档。
+跨 3 遍字母方向 35 个轴单元中 31 个完全稳定,翻转只出现在 E/I 轴。
 
-### 复现方式
+> 结果是「行为倾向画像」,不是人格测量。
+> 完整结论(稳定性、轴间相关、陷阱发现率、事故复盘)在 **[REPORT](run-full-01/REPORT.md)**([网页版](run-full-01/REPORT.html));这四个小时里发生了什么——记忆污染事故、安全分类器换题、两次「完成事件丢失」——在 **[DEVLOG](docs/DEVLOG.md)**。
 
-本项目不是 pip 库，而是一套「规范文档 + 执行脚本 + 完整数据」。前置条件：已认证的 `claude` CLI（≥ 2.1.x）与 `codex` CLI（≥ 0.144.x）。
-
-```bash
-git clone https://github.com/r1ckyIn/mbti-bench.git
-cd mbti-bench
-```
-
-两种跑法：
-
-1. **编排 agent 跑（原始方式）**：把 `PROMPT.md` 喂给一个新的 Claude Code 会话，它会按 `docs/` 三份规范执行 Phase 0–4（预检 → 跑题 → 盲评 → 聚合 → 报告）。
-2. **手动跑**：按 `docs/cli-reference.md` 的调用模板依次执行 `tools/phase0.py`（冒烟＋能力探测）→ `tools/full_setup.py` → `tools/full_runner_v2.py`（v2 加固协议）→ `tools/judge_full.py` → `score.py`。
-
-⚠️ 复现前必读 `docs/cli-reference.md` 第 3 节与 DEVLOG 第 7 节：被试隔离配方（独立 cwd、插件/hooks/记忆/skills 全部剥离、模型归属校验）是两轮事故换来的，缺任何一层都会产生被污染的数据。
-
-### 项目结构
+## How it works
 
 ```
-mbti-bench/
-├── PROMPT.md              # 编排者提示词（喂给 Claude Code 即可运行）
-├── docs/
-│   ├── dimensions.md      # 五维量表定义、盲评协议、聚合规则
-│   ├── scenarios.md       # 16 道情景题原文＋逐题评分锚点
-│   ├── cli-reference.md   # 模型 ID、调用模板、静默失败清单、重试协议
-│   └── DEVLOG.md          # 开发史：时间线、事故、harness 教训、方法论
-├── assets/                # 被试防污染 settings（v1 / v2 加固版）
-├── tools/                 # 运行器、评审、隔离脚本（纯标准库）
-├── pilot/                 # 试点报告＋调用账本（30 调用验证）
-└── run-full-01/           # 全量运行：报告、账本、判分聚合、环境快照
-    ├── REPORT.md / .html  # 最终报告（8 节＋事故复盘＋附录）
-    ├── calls.jsonl        # 516 行 append-only 调用总账
-    ├── scores.json        # 7 模型 × 5 轴聚合结果
-    └── score.py           # 聚合脚本（中位数/IQR/字母判定）
+ docs/scenarios.md ─── 16 题原文,一字不改
+         │ stdin
+         ▼
+ claude -p / codex exec ─── 7 模型 × 16 题 × 3 遍,每次全新子进程
+         │ 隔离:独立 cwd · 插件/hooks/记忆/skills 全剥离 · 模型归属校验
+         ▼
+ raw/ + calls.jsonl ─── append-only 总账,断点续跑
+         │ 脱敏
+         ▼
+ claude-fable-5 盲评 ─── 逐题锚点打分,21 批 + 1 批双评质检
+         ▼
+ score.py → scores.json → REPORT
 ```
 
-### 技术栈
+## 复现
 
-- **语言**：Python 3.10+，纯标准库（`subprocess`、`json`、`statistics`、`concurrent.futures`），零第三方依赖
-- **被试通道**：`claude -p`（stream-json）与 `codex exec`（--json），每次调用全新子进程
-- **评审**：`claude -p --model claude-fable-5` 盲评（转录先脱敏，模型自称统一替换为 "the assistant"）
+前置:已认证的 `claude` CLI(≥ 2.1.x)与 `codex` CLI(≥ 0.144.x)。
+Python 3.10+,零第三方依赖。
 
----
+```sh
+git clone https://github.com/r1ckyIn/mbti-bench.git && cd mbti-bench
+```
 
-## English
+两条路:
 
-### Overview
+1. **让编排 agent 跑**(原始方式)——把 `PROMPT.md` 喂给一个新的 Claude Code 会话,它会按 `docs/` 三份规范从预检一路跑到报告。
+2. **手动跑**——`tools/` 下按 Phase 排好:`phase0.py`(冒烟+能力探测)→ `full_setup.py` → `full_runner_v2.py`(v2 加固协议)→ `judge_full.py` → `score.py`。脚本头部硬编码了原始运行路径,先改成你自己的目录再跑。
 
-What do you get if you give LLMs an MBTI test? Human questionnaires don't transfer — so this project redefines the MBTI letters as AI behavioral semantics and drops 7 models (4 Claude, 3 Codex) into **scenarios disguised as genuine user requests**: 5 axes × 16 scenarios × 3 independent reps, invoked as fresh `claude -p` / `codex exec` subprocesses, scored by a blinded judge against per-scenario anchors. The output is a behavioral-tendency profile, not a personality measurement.
-
-Key results: models split into two clean families — Claude models profile as NTJ-A (intent-reading, candid, willing to push back), all three Codex models as identical ISTJ-A (literal, scope-strict). Letter direction was stable across reps in 31 of 35 axis-cells. Full findings in [run-full-01/REPORT.md](run-full-01/REPORT.md) (Chinese).
-
-The whole thing — design, pilot, a memory-contamination incident forcing a hardened rerun, a safety-classifier discovery that required swapping one scenario, and two "lost completion event" harness lessons — happened in about four hours; the distilled timeline is in [docs/DEVLOG.md](docs/DEVLOG.md) (Chinese).
-
-### Reproducing
-
-Prerequisites: authenticated `claude` CLI (≥ 2.1.x) and `codex` CLI (≥ 0.144.x). Either feed `PROMPT.md` to a fresh Claude Code session (it orchestrates Phase 0–4 end-to-end per the three spec docs), or run the `tools/` scripts manually following `docs/cli-reference.md`. Read the subject-isolation recipe first — every layer of it (per-call cwd, plugin/hook/memory/skill stripping, model-attribution check) exists because its absence corrupted data in a real run.
-
----
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Author
-
-**Ricky** - CS Student @ University of Sydney
-
-[![GitHub](https://img.shields.io/badge/GitHub-r1ckyIn-181717?style=flat-square&logo=github)](https://github.com/r1ckyIn)
-
-Interested in Cloud Engineering & DevOps
+动手前先读 `docs/cli-reference.md` 第 3 节:被试隔离配方的每一层都对应一次真实翻车(经过见 DEVLOG 第 7 节),缺一层,跑出来的就是污染数据。
