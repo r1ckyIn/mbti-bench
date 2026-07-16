@@ -68,3 +68,13 @@ git clone https://github.com/r1ckyIn/mbti-bench.git && cd mbti-bench
 2. **手动跑**——`tools/` 下按 Phase 排好:`phase0.py`(冒烟+能力探测)→ `full_setup.py` → `full_runner_v2.py`(v2 加固协议)→ `judge_full.py` → `score.py`。脚本头部硬编码了原始运行路径,先改成你自己的目录再跑。
 
 动手前先读 `docs/cli-reference.md` 第 3 节:被试隔离配方的每一层都对应一次真实翻车(经过见 DEVLOG 第 7 节),缺一层,跑出来的就是污染数据。
+
+## 相关工作
+
+**「问卷对 LLM 失效」有文献直接支持。** 自陈答案对提示格式与选项顺序高度敏感([Dorner et al. 2023](https://arxiv.org/abs/2309.08163));自陈特质不能预测实际行为,persona 注入能改自陈却几乎不改行为([The Personality Illusion](https://arxiv.org/abs/2509.03730));跨 25 个模型测得系统性的自陈-行为差距([arXiv:2606.09843](https://arxiv.org/abs/2606.09843))。对 MBTI 式 LLM profiling 的批判性分析([Frontiers 2026](https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2026.1800284/full))给出的替代方案与本 bench 的做法一致:弃自陈、改情景判断,把机器「人格」理解为上下文依赖的行为倾向而非固定特质。
+
+**情景化测量是学界同方向的路线。** [TRAIT](https://arxiv.org/abs/2406.14703)(NAACL 2025 Findings)用 8K 道情景题代替问卷,效度与信度均高于问卷式基线。「伪装成真实请求」的必要性另有一条独立证据线:前沿模型经常能识别自己正被评估([arXiv:2505.23836](https://arxiv.org/abs/2505.23836);Anthropic 测得 Sonnet 4.5 在安全评估中 80% 以上主动提到被测)——本 bench 333 份判分识破 0 次,正是针对这一风险的设计。
+
+**两族分化的方向有外部印证。** 开发者社区对两个 CLI 的独立观察与本报告结论几乎同词:Codex「以执拗的字面程度执行每个字符,指令矛盾也照做」,Claude「先理解项目、会改你没让碰的代码」([builder.io](https://www.builder.io/blog/codex-vs-claude-code)、[composio](https://composio.dev/content/claude-code-vs-openai-codex))。厂商规范本身就写着这个差异:Anthropic 的宪法明文鼓励模型当「良心反对者」、"diplomatically honest rather than dishonestly diplomatic";OpenAI Model Spec 把产品定位为工具、强调指令层级。两家 2025 年的[交叉安全评估](https://alignment.anthropic.com/2025/openai-findings/)也测得 GPT 系对宽容系统提示更顺从、Claude 系拒绝阈值更高——与 C/A 轴同向(安全语境,非工作语境)。
+
+**边界。** 七个模型的具体字母画像没有独立复现;opus4.6 的 I(克制)存在社区反例([claude-code#34230](https://github.com/anthropics/claude-code/issues/34230),违反显式 SCOPE LOCK 指令改动未授权代码)——而 E/I 恰是本报告测得的唯一翻转轴,内外证据一致指向它是五轴中最不稳定的一个。
